@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/y100"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:background="@drawable/selector_custom_item"
+    android:clickable="true">
+    <TextView
+        android:id="@+id/tv_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/colorTextListDark"
+        android:text="徐灿"
+        android:layout_centerVertical="true"
+        android:minWidth="50dp"/>
+    <EditText
+        android:id="@+id/et_center"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/tv_left"
+        android:background="@android:color/transparent"
+        android:textSize="16sp"
+        android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/arrow_go"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/icon_arrow_go_gray"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="7dp" />
+    <TextView
+        android:id="@+id/tv_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/colorTextListLight"
+        android:text="修改"
+        android:layout_toLeftOf="@id/arrow_go"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+
+        />
+    <ImageView
+        android:id="@+id/iv_right"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:src="@mipmap/ic_launcher"
+        android:layout_toLeftOf="@id/arrow_go"
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
+
+    <View
+        android:id="@+id/divider_bottom"
+        style="@style/Divider_common"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        />
+
+
+</RelativeLayout>

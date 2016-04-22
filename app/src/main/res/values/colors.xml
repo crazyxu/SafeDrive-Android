@@ -4,4 +4,18 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorGray">#d1d1d1</color>
+
+    <!--list 背景色，点击色-->
+    <color name="colorListBg">#ffffff</color>
+    <color name="colorListBgPressed">#ededed</color>
+
+    <!--list TextView-->
+    <color name="colorTextListDark">#252525</color>
+    <color name="colorTextListLight">#BCBDBF</color>
+
+    <!--页面背景色-->
+    <color name="colorPageBgGray">#f0f2f5</color>
+
+    <!--分割线-->
+    <color name="colorDivider">#d6d6d6</color>
 </resources>

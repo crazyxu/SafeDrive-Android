@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AcceListItem">
+        <attr name="leftTv" format="integer|string"/>
+        <attr name="centerEt" format="boolean"/>
+        <attr name="rightTv" format="integer|string"/>
+        <attr name="rightArrow" format="boolean"/>
+        <attr name="rightImg" format="integer"/>
+        <attr name="etHint" format="integer|string"/>
+        <attr name="bottomDivider" format="boolean"/>
+        <attr name="etEnable" format="boolean"/>
+        <attr name="etInputType" format="integer"/>
+    </declare-styleable>
+</resources>
