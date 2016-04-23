@@ -68,6 +68,7 @@
                 android:layout_centerInParent="true"
                 android:visibility="gone">
                 <ImageView
+                    android:id="@+id/iv_getting_info"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@mipmap/ic_loading"/>
@@ -86,14 +87,14 @@
                 android:gravity="center"
                 android:visibility="gone">
                 <TextView
-                    android:id="@+id/tv_total_time"
+                    android:id="@+id/tv_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:textSize="20sp"
                     android:text="行驶时长：45分钟"/>
                 <TextView
-                    android:id="@+id/tv_total_distance"
+                    android:id="@+id/tv_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"

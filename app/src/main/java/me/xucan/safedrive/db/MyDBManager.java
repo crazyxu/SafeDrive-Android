@@ -36,6 +36,21 @@ public class MyDBManager
 		return myDBManager;
 	}
 
+	/**
+	 * save object
+	 * @param object
+     */
+	public void save(Object object){
+		if (object != null){
+			try {
+				dbManager.save(object);
+			} catch (DbException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
     
     /**
      * 清除数据
