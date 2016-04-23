@@ -22,11 +22,11 @@ public class MainActivity extends AppCompatActivity {
     //导航栏标题
     private String arrTitle[] = {"安全驾驶", "模拟行驶", "行驶记录", "我"};
     //导航栏图标
-    private int arrIcon[] = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher
-        ,R.mipmap.ic_launcher};
+    private int arrIcon[] = {R.mipmap.ic_car_gray, R.mipmap.ic_fxp_gray, R.mipmap.ic_records_gray
+        ,R.mipmap.ic_user_blue};
     //选择状态下的图标
-    private int arrIconSelected[] = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher
-            ,R.mipmap.ic_launcher};
+    private int arrIconSelected[] = {R.mipmap.ic_car_blue, R.mipmap.ic_fxp_blue, R.mipmap.ic_records_blue
+            ,R.mipmap.ic_user_gray};
     //
     private Class arrFragment[] = {IndexFragment.class, SimulationFragment.class, RecordsFragment.class,
             MyFragment.class};
@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
             textView.setTextColor(ContextCompat.getColor(this, R.color.colorGray));
             imageView.setImageResource(arrIcon[tabId]);
         }
-
     }
 
     /**

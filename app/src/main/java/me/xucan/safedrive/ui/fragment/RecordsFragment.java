@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.xucan.safedrive.R;
@@ -38,6 +39,7 @@ public class RecordsFragment extends Fragment {
     }
 
     void initView(){
+        records = new ArrayList<>();
         adapter = new RecordAdapter(records);
         rvRecord.setAdapter(adapter);
         rvRecord.setHasFixedSize(true);

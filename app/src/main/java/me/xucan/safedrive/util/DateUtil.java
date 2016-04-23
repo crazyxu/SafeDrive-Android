@@ -55,4 +55,22 @@ public class DateUtil {
         }
         return "";
     }
+
+    /**
+     * 获取当前时分
+     * @param mss
+     * @return
+     */
+    public static String parseMillis(long mss){
+        long hours = (mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+        long minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
+        String distance = "";
+        if (hours != 0){
+            distance += hours + ":";
+        }
+        if (minutes != 0){
+            distance += minutes;
+        }
+        return distance;
+    }
 }
