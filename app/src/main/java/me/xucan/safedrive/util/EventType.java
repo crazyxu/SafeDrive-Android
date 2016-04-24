@@ -14,13 +14,13 @@ public class EventType {
     //抖动
     public final static int JITTER = 0x02;
 
-    //急刹
+    //超速
     public final static int OVERSPEED = 0x03;
 
-    //急刹
+    //偏移
     public final static int SKEWING = 0x04;
 
     //急刹
-    public final static int TRAIN = 0x05;
+    public final static int CRASH = 0x05;
 
 }

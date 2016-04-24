@@ -73,4 +73,8 @@ public class DateUtil {
         }
         return distance;
     }
+
+    public static long getTime(){
+        return new Date().getTime();
+    }
 }

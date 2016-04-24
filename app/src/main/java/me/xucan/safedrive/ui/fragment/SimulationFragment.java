@@ -15,9 +15,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -28,7 +31,9 @@ import java.util.Map;
 
 import me.xucan.safedrive.App;
 import me.xucan.safedrive.R;
+import me.xucan.safedrive.bean.DriveEvent;
 import me.xucan.safedrive.bean.DriveRecord;
+import me.xucan.safedrive.bean.DriveWarn;
 import me.xucan.safedrive.bean.MessageEvent;
 import me.xucan.safedrive.db.MyDBManager;
 import me.xucan.safedrive.net.MJsonRequest;
@@ -37,7 +42,9 @@ import me.xucan.safedrive.net.NetParams;
 import me.xucan.safedrive.net.RequestManager;
 import me.xucan.safedrive.util.AppParams;
 import me.xucan.safedrive.util.DateUtil;
+import me.xucan.safedrive.util.EventType;
 import me.xucan.safedrive.util.PositionUtil;
+import me.xucan.safedrive.util.SafeTyRules;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +52,8 @@ import me.xucan.safedrive.util.PositionUtil;
 public class SimulationFragment extends Fragment implements MRequestListener{
     //记时
     private final static int MSG_START_COUNT = 0x00;
+    //服务器发送的警告信息
+    public final static String EVENT_DRIVE_WARN = "SimulationFragment_Drive_Warn";
 
     //title
     @ViewInject(R.id.tv_cur_speed)
@@ -105,21 +114,38 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_simulation, container, false);
         x.view().inject(this, view);
+        EventBus.getDefault().register(this);
         initView();
         myHandler = new MyHandler();
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event){
+        switch (event.message){
+            case EVENT_DRIVE_WARN:
+                DriveWarn warn = (DriveWarn) event.data;
+                String state = SafeTyRules.getState(warn);
+                tvState.setText(state);
+                break;
+        }
+    }
+
     void initView(){
         //设置当前时间
-        tiem = new Date().getTime();
-        tvTime.setText(DateUtil.parseMillis(tiem));
+        tvTime.setText(DateUtil.parseMillis(DateUtil.getTime()));
 
     }
 
-    @Event(value = {R.id.btn_brakes, R.id.btn_cancel, R.id.btn_fatigue, R.id.btn_isOK, R.id.btn_Jitter,
+    @Event(value = {R.id.btn_brakes, R.id.btn_fatigue, R.id.btn_Jitter,
         R.id.btn_overspeed, R.id.btn_skewing, R.id.btn_speeds_add, R.id.btn_speeds_reduce,
-            R.id.btn_train, R.id.iv_control})
+            R.id.btn_crash, R.id.iv_control})
     private void OnClick(View view){
         switch (view.getId()){
             case R.id.iv_control:
@@ -138,18 +164,22 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 }
                 break;
             case R.id.btn_brakes:
-                break;
-            case R.id.btn_cancel:
+                sendDriveEvent(EventType.BRAKES);
                 break;
             case R.id.btn_fatigue:
-                break;
-            case R.id.btn_isOK:
+                sendDriveEvent(EventType.FATIGUE);
                 break;
             case R.id.btn_Jitter:
+                sendDriveEvent(EventType.JITTER);
                 break;
             case R.id.btn_overspeed:
+                sendDriveEvent(EventType.OVERSPEED);
                 break;
             case R.id.btn_skewing:
+                sendDriveEvent(EventType.SKEWING);
+                break;
+            case R.id.btn_crash:
+                sendDriveEvent(EventType.CRASH);
                 break;
             case R.id.btn_speeds_add:
                 changeSpeeds(true);
@@ -183,6 +213,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         map.put("userId", App.getInstance().getUserId());
         map.put("endTime", new Date().getTime());
         map.put("startPosition", PositionUtil.getPosition());
+        map.put("distance", distance);
         //旋转动画
         Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.loading);
         animation.setInterpolator( new LinearInterpolator());
@@ -197,7 +228,15 @@ public class SimulationFragment extends Fragment implements MRequestListener{
      * @param type
      */
     void sendDriveEvent(int type){
-
+        DriveEvent event = new DriveEvent();
+        event.setRecordId(recordId);
+        event.setType(type);
+        event.setTime(DateUtil.getTime());
+        Map<String,Object> map = new HashMap<>();
+        map.put("userId", App.getInstance().getUserId());
+        map.put("event", JSON.toJSONString(event));
+        //发送请求
+        requestManager.startRequest(new MJsonRequest(NetParams.URL_DRIVE_EVENT, map, this));
     }
 
     void changeSpeeds(boolean add){
@@ -234,6 +273,11 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 MyDBManager.getInstance().save(driveRecord);
                 //通知RecordsFragment更新事件
                 EventBus.getDefault().post(new MessageEvent(RecordsFragment.EVENT_ADD_RECORD,driveRecord));
+                break;
+            case NetParams.URL_DRIVE_EVENT:
+                DriveWarn warn = response.getObject("warn", DriveWarn.class);
+                String state = SafeTyRules.getState(warn);
+                tvState.setText(state);
                 break;
         }
     }

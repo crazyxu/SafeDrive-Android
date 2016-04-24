@@ -10,7 +10,7 @@ public class DriveEvent {
     //一次出行DriveRecord Id
     private int recordId;
     //发生时间
-    private String time;
+    private long time;
     //extra
     private String extra;
 
@@ -30,11 +30,11 @@ public class DriveEvent {
         this.recordId = recordId;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
