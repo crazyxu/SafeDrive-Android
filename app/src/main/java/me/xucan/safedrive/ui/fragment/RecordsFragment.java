@@ -20,7 +20,7 @@ import java.util.List;
 
 import me.xucan.safedrive.R;
 import me.xucan.safedrive.bean.DriveRecord;
-import me.xucan.safedrive.bean.MessageEvent;
+import me.xucan.safedrive.message.MessageEvent;
 import me.xucan.safedrive.ui.adapter.RecordAdapter;
 
 /**

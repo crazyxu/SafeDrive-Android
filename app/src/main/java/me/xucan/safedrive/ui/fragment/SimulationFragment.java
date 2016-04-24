@@ -34,7 +34,7 @@ import me.xucan.safedrive.R;
 import me.xucan.safedrive.bean.DriveEvent;
 import me.xucan.safedrive.bean.DriveRecord;
 import me.xucan.safedrive.bean.DriveWarn;
-import me.xucan.safedrive.bean.MessageEvent;
+import me.xucan.safedrive.message.MessageEvent;
 import me.xucan.safedrive.db.MyDBManager;
 import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;

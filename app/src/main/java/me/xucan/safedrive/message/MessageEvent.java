@@ -1,4 +1,4 @@
-package me.xucan.safedrive.bean;
+package me.xucan.safedrive.message;
 
 /**
  * @author xucan

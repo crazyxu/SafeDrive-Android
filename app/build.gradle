@@ -11,6 +11,13 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -29,5 +36,4 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.alibaba:fastjson:1.2.8'
-    compile project(':IMKit')
 }
