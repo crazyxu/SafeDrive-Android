@@ -2,8 +2,13 @@ package me.xucan.safedrive;
 
 import android.content.Context;
 
+import org.greenrobot.eventbus.EventBus;
+
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
+import me.xucan.safedrive.message.DriveWarnMessage;
+import me.xucan.safedrive.message.MessageEvent;
+import me.xucan.safedrive.ui.fragment.SimulationFragment;
 
 /**
  * 融云SDK事件监听处理。
@@ -64,6 +69,10 @@ public class RongCloudEvent implements RongIMClient.OnReceiveMessageListener{
 
     @Override
     public boolean onReceived(Message message, int i) {
+        if (message.getObjectName().equals(DriveWarnMessage.tag)){
+            DriveWarnMessage warnMessage = (DriveWarnMessage) message.getContent();
+            EventBus.getDefault().post(new MessageEvent(SimulationFragment.EVENT_DRIVE_WARN, warnMessage));
+        }
         return false;
     }
 }

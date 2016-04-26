@@ -9,5 +9,6 @@ public class NetParams {
     public final static String URL_DRIVE_START = HOST+ "app/drive/start";
     public final static String URL_DRIVE_STOP = HOST+ "app/drive/stop";
     public final static String URL_DRIVE_EVENT = HOST+ "app/drive/event";
+    public final static String URL_DRIVE_EVENT_WARN = HOST+ "app/drive/eventWarn";
 
 }

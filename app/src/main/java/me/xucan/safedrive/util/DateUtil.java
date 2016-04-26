@@ -16,7 +16,7 @@ public class DateUtil {
      * @param endTime
      * @return
      */
-    public static String getDuration(String startTime, String endTime){
+    public static String getDuration(long startTime, long endTime){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         try {
             Date startDate = sdf.parse(startTime);
@@ -43,7 +43,7 @@ public class DateUtil {
      * @param time
      * @return
      */
-    public static String getSimplifyDate(String time){
+    public static String getSimplifyDate(long time){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         SimpleDateFormat newSdf = new SimpleDateFormat("MM月dd日 HH:mm", Locale.CHINA);
         try {

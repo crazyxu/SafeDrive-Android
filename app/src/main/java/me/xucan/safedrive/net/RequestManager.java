@@ -27,7 +27,7 @@ public class RequestManager {
     public static RequestManager getInstance(){
 
         if (requestManager == null){
-            requestManager = new RequestManager(App.getContext());
+            requestManager = new RequestManager(App.getInstance().getContext());
         }
         return requestManager;
     }

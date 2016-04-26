@@ -19,6 +19,7 @@ import io.rong.imlib.model.MessageContent;
         flag= MessageTag.ISCOUNTED| MessageTag.ISPERSISTED
 )
 public class DriveWarnMessage extends MessageContent{
+    public final static String tag = "SD:DriveWarnMsg";
     private String content;
 
     public static final Parcelable.Creator<DriveWarnMessage> CREATOR = new Parcelable.Creator() {

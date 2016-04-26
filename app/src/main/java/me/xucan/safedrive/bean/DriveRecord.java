@@ -3,12 +3,14 @@ package me.xucan.safedrive.bean;
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
+import java.io.Serializable;
+
 /**
  * Created by xcytz on 2016/4/22.
  * 一个行车记录
  */
 @Table(name = "tb_drive_record")
-public class DriveRecord {
+public class DriveRecord implements Serializable{
 
     @Column(name = "recordId", isId = true)
     private int recordId;
@@ -17,10 +19,10 @@ public class DriveRecord {
     private int userId;
 
     @Column(name = "startTime")
-    private String startTime;
+    private long startTime;
 
     @Column(name = "endTime")
-    private String endTime;
+    private long endTime;
 
     @Column(name = "startPlace")
     private String startPlace;
@@ -58,19 +60,19 @@ public class DriveRecord {
         this.userId = userId;
     }
 
-    public String getStartTime() {
+    public long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
 

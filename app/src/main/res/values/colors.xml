@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#00fd7f</color>
     <color name="colorAccent">#00fd7f</color>
     <color name="colorGray">#d1d1d1</color>
-
+    <color name="colorDarkGray">#585757</color>
     <!--list 背景色，点击色-->
     <color name="colorListBg">#ffffff</color>
     <color name="colorListBgPressed">#ededed</color>

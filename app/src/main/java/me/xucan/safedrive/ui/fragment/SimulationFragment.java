@@ -4,6 +4,7 @@ package me.xucan.safedrive.ui.fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,6 +108,11 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     private MyHandler myHandler;
     private RequestManager requestManager = RequestManager.getInstance();
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,7 +120,6 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_simulation, container, false);
         x.view().inject(this, view);
-        EventBus.getDefault().register(this);
         initView();
         myHandler = new MyHandler();
         return view;
@@ -186,8 +191,6 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 break;
             case R.id.btn_speeds_reduce:
                 changeSpeeds(false);
-                break;
-            case R.id.btn_train:
                 break;
 
         }
