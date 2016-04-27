@@ -67,7 +67,7 @@ public class RequestManager {
     }
     
     public void addRequest(Request request){
-        request.setRetryPolicy(new DefaultRetryPolicy(10*1000,
+        request.setRetryPolicy(new DefaultRetryPolicy(300*1000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     	mRequestQueue.add(request);

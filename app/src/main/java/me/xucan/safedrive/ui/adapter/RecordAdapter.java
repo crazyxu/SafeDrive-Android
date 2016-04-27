@@ -55,7 +55,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 	@Override
 	public int getItemCount() {
 		// TODO Auto-generated method stub
-		return records == null ? 5 : records.size();
+		return records == null ? 0 : records.size();
 	}
 
 	/*
@@ -72,7 +72,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 		if (record == null)
 			return;
 		viewHolder.tvStartTime.setText(DateUtil.getSimplifyDate(record.getStartTime()));
-		viewHolder.tvSafetyPoint.setText(record.getSafetyIndex());
+		viewHolder.tvSafetyPoint.setText(record.getSafetyIndex()+"");
 		viewHolder.tvStartPlace.setText(record.getStartPlace());
 		viewHolder.tvEndPlace.setText(record.getEndPlace());
 		viewHolder.tvDistance.setText(record.getDistance() + "km");

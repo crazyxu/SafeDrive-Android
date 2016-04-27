@@ -84,6 +84,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     @ViewInject(R.id.iv_getting_info)
     private ImageView ivGettingResult;
 
+
     //container
     @ViewInject(R.id.ll_result)
     private LinearLayout llResult;
@@ -156,9 +157,14 @@ public class SimulationFragment extends Fragment implements MRequestListener{
             case R.id.iv_control:
                 if (running){
                     //结束行驶
+                    //停止计时
                     running = false;
                     ivControl.setVisibility(View.GONE);
                     llGetResult.setVisibility(View.VISIBLE);
+                    //旋转动画
+                    Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.loading);
+                    animation.setInterpolator( new LinearInterpolator());
+                    ivGettingResult.startAnimation(animation);
                     endDrive();
                 }else {
 
@@ -216,10 +222,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         record.setEndPlace(PositionUtil.getPosition());
         record.setDistance(distance);
         map.put("record", record);
-        //旋转动画
-        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.loading);
-        animation.setInterpolator( new LinearInterpolator());
-        ivGettingResult.startAnimation(animation);
+
         //发送请求
         new MJsonRequest(NetParams.URL_DRIVE_STOP, map, this).startRequest();
 
@@ -264,9 +267,10 @@ public class SimulationFragment extends Fragment implements MRequestListener{
             case NetParams.URL_DRIVE_STOP:
                 int safetyIndex = response.getIntValue("safetyIndex");
                 record.setSafetyIndex(safetyIndex);
+
                 //更新ui，行车数据统计
                 ivGettingResult.clearAnimation();
-                ivGettingResult.setVisibility(View.GONE);
+                llGetResult.setVisibility(View.GONE);
                 //显示结果
                 llResult.setVisibility(View.VISIBLE);
                 tvDistance.setText(record.getDistance()+"km");
@@ -323,7 +327,13 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 case MSG_START_COUNT:
                     //1000ms发送一次
                     while (running){
-                        myHandler.sendEmptyMessageDelayed(MSG_START_COUNT, 1000);
+                        try {
+                            this.sleep(1000);
+                            myHandler.sendEmptyMessage(MSG_START_COUNT);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                     break;
 

@@ -10,6 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -17,17 +21,23 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import me.xucan.safedrive.App;
 import me.xucan.safedrive.R;
 import me.xucan.safedrive.bean.DriveRecord;
 import me.xucan.safedrive.message.MessageEvent;
+import me.xucan.safedrive.net.MJsonRequest;
+import me.xucan.safedrive.net.MRequestListener;
+import me.xucan.safedrive.net.NetParams;
 import me.xucan.safedrive.ui.adapter.RecordAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecordsFragment extends Fragment {
+public class RecordsFragment extends Fragment implements MRequestListener{
     public final static String EVENT_ADD_RECORD = "RecordsFragment_Add_Record";
     @ViewInject(R.id.rv_record)
     private RecyclerView rvRecord;
@@ -41,6 +51,7 @@ public class RecordsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_records, container, false);
         x.view().inject(this, view);
         initView();
+        getData(0,10);
         return view;
     }
 
@@ -83,4 +94,31 @@ public class RecordsFragment extends Fragment {
         rvRecord.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
+    void getData(int from, int to){
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", App.getInstance().getUserId());
+        map.put("fromNum",from);
+        map.put("toNum", to);
+        new MJsonRequest(NetParams.URL_DRIVE_GET, map, this).startRequest();
+    }
+
+    @Override
+    public void onSuccess(String requestUrl, JSONObject response) {
+        switch (requestUrl){
+            case NetParams.URL_DRIVE_GET:
+                JSONArray array = response.getJSONArray("records");
+                for (int i = 0; i < array.size(); i++){
+                    JSONObject object = (JSONObject)array.get(i);
+                    DriveRecord record = JSON.toJavaObject(object, DriveRecord.class);
+                    records.add(record);
+                }
+                adapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
+    @Override
+    public void onError(String requestUrl, int errCode, String errMsg) {
+
+    }
 }
