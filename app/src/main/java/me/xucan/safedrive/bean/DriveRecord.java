@@ -31,7 +31,7 @@ public class DriveRecord implements Serializable{
     private String endPlace;
 
     @Column(name = "distance")
-    private int distance;
+    private float distance;
 
     @Column(name = "safetyIndex")
     private int safetyIndex;
@@ -92,11 +92,11 @@ public class DriveRecord implements Serializable{
         this.endPlace = endPlace;
     }
 
-    public int getDistance() {
+    public float getDistance() {
         return distance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(float distance) {
         this.distance = distance;
     }
 }

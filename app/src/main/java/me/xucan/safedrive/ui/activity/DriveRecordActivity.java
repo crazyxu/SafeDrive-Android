@@ -24,7 +24,6 @@ import me.xucan.safedrive.bean.EventWarn;
 import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;
 import me.xucan.safedrive.net.NetParams;
-import me.xucan.safedrive.net.RequestManager;
 import me.xucan.safedrive.ui.adapter.EventAdapter;
 import me.xucan.safedrive.util.DateUtil;
 
@@ -73,7 +72,7 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         Map<String,Object> map = new HashMap<>();
         map.put("recordId", recordId);
-        RequestManager.getInstance().startRequest(new MJsonRequest(NetParams.URL_DRIVE_EVENT_WARN, map, this));
+        new MJsonRequest(NetParams.URL_DRIVE_EVENT_WARN, map, this).startRequest();
     }
 
     void extraIntent(){
@@ -83,7 +82,7 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
         tvStartTime.setText(DateUtil.getSimplifyDate(record.getStartTime()));
         tvEndTime.setText(DateUtil.getSimplifyDate(record.getEndTime()));
         tvDuration.setText(DateUtil.getDuration(record.getStartTime(), record.getEndTime()));
-        tvDistance.setText(record.getDistance());
+        tvDistance.setText(record.getDistance()+"km");
         tvSafetyIndex.setText(record.getSafetyIndex());
     }
 

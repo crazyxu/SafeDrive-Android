@@ -82,7 +82,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
 
     //正在获取统计数据
     @ViewInject(R.id.iv_getting_info)
-    private LinearLayout ivGettingResult;
+    private ImageView ivGettingResult;
 
     //container
     @ViewInject(R.id.ll_result)
@@ -98,12 +98,12 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     //安全指数(0~100)
     private int safetyPoint;
     //路程(km)
-    private long distance;
+    private float distance;
     //运行状态
     private boolean running = false;
 
     //此次驾驶记录id
-    private int recordId;
+    private DriveRecord record = new DriveRecord();
 
     private MyHandler myHandler;
     private RequestManager requestManager = RequestManager.getInstance();
@@ -161,9 +161,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                     llGetResult.setVisibility(View.VISIBLE);
                     endDrive();
                 }else {
-                    //开始行驶
-                    running = true;
-                    ivControl.setImageResource(R.mipmap.ic_stop);
+
                     //发送请求
                     startDrive();
                 }
@@ -202,10 +200,11 @@ public class SimulationFragment extends Fragment implements MRequestListener{
      */
     void startDrive(){
         Map<String,Object> map = new HashMap<>();
-        map.put("userId", App.getInstance().getUserId());
-        map.put("startTime", new Date().getTime());
-        map.put("startPosition", PositionUtil.getPosition());
-        requestManager.startRequest(new MJsonRequest(NetParams.URL_DRIVE_START, map, this));
+        record.setUserId(App.getInstance().getUserId());
+        record.setStartPlace(PositionUtil.getPosition());
+        record.setStartTime(new Date().getTime());
+        map.put("record", record);
+        new MJsonRequest(NetParams.URL_DRIVE_START, map, this).startRequest();
     }
 
     /**
@@ -213,16 +212,16 @@ public class SimulationFragment extends Fragment implements MRequestListener{
      */
     void endDrive(){
         Map<String,Object> map = new HashMap<>();
-        map.put("userId", App.getInstance().getUserId());
-        map.put("endTime", new Date().getTime());
-        map.put("startPosition", PositionUtil.getPosition());
-        map.put("distance", distance);
+        record.setEndTime(new Date().getTime());
+        record.setEndPlace(PositionUtil.getPosition());
+        record.setDistance(distance);
+        map.put("record", record);
         //旋转动画
         Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.loading);
         animation.setInterpolator( new LinearInterpolator());
         ivGettingResult.startAnimation(animation);
         //发送请求
-        requestManager.startRequest(new MJsonRequest(NetParams.URL_DRIVE_STOP, map, this));
+        new MJsonRequest(NetParams.URL_DRIVE_STOP, map, this).startRequest();
 
     }
 
@@ -232,14 +231,14 @@ public class SimulationFragment extends Fragment implements MRequestListener{
      */
     void sendDriveEvent(int type){
         DriveEvent event = new DriveEvent();
-        event.setRecordId(recordId);
+        event.setRecordId(record.getRecordId());
         event.setType(type);
         event.setTime(DateUtil.getTime());
         Map<String,Object> map = new HashMap<>();
         map.put("userId", App.getInstance().getUserId());
         map.put("event", JSON.toJSONString(event));
         //发送请求
-        requestManager.startRequest(new MJsonRequest(NetParams.URL_DRIVE_EVENT, map, this));
+        new MJsonRequest(NetParams.URL_DRIVE_EVENT, map, this).startRequest();
     }
 
     void changeSpeeds(boolean add){
@@ -256,26 +255,27 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         switch (requestUrl){
             case NetParams.URL_DRIVE_START:
                 //开始计时
+                //开始行驶
+                running = true;
+                ivControl.setImageResource(R.mipmap.ic_stop);
                 new MyThread(MSG_START_COUNT).start();
-                recordId = response.getInteger("recordId");
+                record.setRecordId(response.getInteger("recordId"));
                 break;
             case NetParams.URL_DRIVE_STOP:
-                DriveRecord driveRecord = response.getObject("record", DriveRecord.class);
+                int safetyIndex = response.getIntValue("safetyIndex");
+                record.setSafetyIndex(safetyIndex);
                 //更新ui，行车数据统计
                 ivGettingResult.clearAnimation();
                 ivGettingResult.setVisibility(View.GONE);
                 //显示结果
                 llResult.setVisibility(View.VISIBLE);
-                if (driveRecord != null){
-                    tvDistance.setText(driveRecord.getDistance());
-                    tvDuration.setText(DateUtil.getDuration(driveRecord.getEndTime(),
-                            driveRecord.getStartTime()));
-                    tvSafetyPoint.setText(driveRecord.getSafetyIndex());
-                }
+                tvDistance.setText(record.getDistance()+"km");
+                tvDuration.setText(DateUtil.getDuration(record.getEndTime(),record.getStartTime()));
+                tvSafetyPoint.setText(record.getSafetyIndex()+"");
                 //保存到本地
-                MyDBManager.getInstance().save(driveRecord);
+                MyDBManager.getInstance().save(record);
                 //通知RecordsFragment更新事件
-                EventBus.getDefault().post(new MessageEvent(RecordsFragment.EVENT_ADD_RECORD,driveRecord));
+                EventBus.getDefault().post(new MessageEvent(RecordsFragment.EVENT_ADD_RECORD,record));
                 break;
             case NetParams.URL_DRIVE_EVENT:
                 DriveWarn warn = response.getObject("warn", DriveWarn.class);
@@ -287,7 +287,12 @@ public class SimulationFragment extends Fragment implements MRequestListener{
 
     @Override
     public void onError(String requestUrl, int errCode, String errMsg) {
-
+        switch (requestUrl){
+            case NetParams.URL_DRIVE_STOP:
+                ivGettingResult.clearAnimation();
+                ivGettingResult.setVisibility(View.GONE);
+                break;
+        }
     }
 
 

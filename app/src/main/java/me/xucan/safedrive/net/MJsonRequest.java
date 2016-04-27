@@ -1,80 +1,75 @@
 package me.xucan.safedrive.net;
 
-import android.util.Log;
-
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
 
-import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author xucan
  */
-public class MJsonRequest extends JsonRequest<JSONObject> {
+public class MJsonRequest {
 	private String url;
-	private JSONObject jsonObj;
 	private MRequestListener listener;
+	private Map<String, Object> params;
+	private StringRequest request;
 	
 	public MJsonRequest(final String url, Map<String, Object> params, final MRequestListener listener){
-		super(Method.POST, url, params.toString(), new Response.Listener<JSONObject>() {
-
-			@Override
-			public void onResponse(JSONObject response) {
-				// TODO Auto-generated method stub
-
-			}
-			
-		}, new ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				// TODO Auto-generated method stub
-				if (error != null) {
-					Log.e("VolleyError", error.getMessage());
-				}
-				listener.onError(url, -1, "请求提交失败，稍后再试");
-			}
-		});
-		this.jsonObj = jsonObj;
 		this.url = url;
 		this.listener = listener;
-		this.setRetryPolicy(new DefaultRetryPolicy(10*1000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		this.params = params;
+		
+	}
+	public void startRequest(){
+		request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+			@Override
+			public void onResponse(String response) {
+				JSONObject object = JSON.parseObject(response);
+				if (object != null && object.containsKey("status")){
+					if (object.getIntValue("status") == 200){
+						listener.onSuccess(url, object.getJSONObject("body"));
+					}else{
+						listener.onError(url, object.getIntValue("status"), object.getString("errorMsg"));
+					}
+
+				}
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				int statusCode = 0;
+				if (error.networkResponse != null)
+					statusCode = error.networkResponse.statusCode;
+				listener.onError(url, statusCode, "请求提交失败！");
+			}
+		}){
+			@Override
+			protected Map<String, String> getParams() throws AuthFailureError {
+				Map<String, String> map = new HashMap<>();
+				for (String key  : params.keySet()){
+					Object obj = params.get(key);
+					String clazz = obj.getClass().toString();
+					//基本类型
+					if (clazz.equals(String.class.toString()) || clazz.equals(int.class.toString()) ||
+							clazz.equals(long.class.toString()) || clazz.equals(boolean.class.toString())){
+						map.put(key, String.valueOf(obj));
+					}else{
+						map.put(key, JSON.toJSONString(obj));
+					}
+
+				}
+				return map;
+			}
+		};
+		RequestManager.getInstance().addRequest(request);
 	}
 	
 
-
-
-
-
-
-	/* (non-Javadoc)
-	 * @see com.android.volley.toolbox.JsonRequest#parseNetworkResponse(com.android.volley.NetworkResponse)
-	 */
-	@Override
-	protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-		// TODO Auto-generated method stub
-		try {
-            String jsonString = new String(response.data,
-                    HttpHeaderParser.parseCharset(response.headers));
-            return Response.success(JSON.parseObject(jsonString),
-                    HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
-            return Response.error(new ParseError(e));
-        } catch (JSONException je) {
-            return Response.error(new ParseError(je));
-        } 
-	}
 
 }

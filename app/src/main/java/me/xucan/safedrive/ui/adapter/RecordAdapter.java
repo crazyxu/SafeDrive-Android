@@ -75,7 +75,7 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 		viewHolder.tvSafetyPoint.setText(record.getSafetyIndex());
 		viewHolder.tvStartPlace.setText(record.getStartPlace());
 		viewHolder.tvEndPlace.setText(record.getEndPlace());
-		viewHolder.tvDistance.setText(record.getDistance());
+		viewHolder.tvDistance.setText(record.getDistance() + "km");
 		viewHolder.tvDuration.setText(DateUtil.getDuration(record.getEndTime(),
 				record.getStartTime()));
 	}

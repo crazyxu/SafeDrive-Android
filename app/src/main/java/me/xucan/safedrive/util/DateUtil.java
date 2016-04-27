@@ -1,6 +1,5 @@
 package me.xucan.safedrive.util;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -19,8 +18,8 @@ public class DateUtil {
     public static String getDuration(long startTime, long endTime){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         try {
-            Date startDate = sdf.parse(startTime);
-            Date endDate = sdf.parse(endTime);
+            Date startDate = new Date(startTime);
+            Date endDate = new Date(endTime);
             long mss = endDate.getTime() - startDate.getTime();
             long hours = (mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
             long minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
@@ -32,7 +31,7 @@ public class DateUtil {
                 distance += minutes + "分钟";
             }
             return distance;
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
@@ -47,10 +46,10 @@ public class DateUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         SimpleDateFormat newSdf = new SimpleDateFormat("MM月dd日 HH:mm", Locale.CHINA);
         try {
-            Date date = sdf.parse(time);
+            Date date = new Date(time);
             return newSdf.format(date);
 
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
