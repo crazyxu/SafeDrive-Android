@@ -1,6 +1,7 @@
 package me.xucan.safedrive.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -61,16 +62,9 @@ public class DateUtil {
      * @return
      */
     public static String parseMillis(long mss){
-        long hours = (mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
-        long minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
-        String distance = "";
-        if (hours != 0){
-            distance += hours + ":";
-        }
-        if (minutes != 0){
-            distance += minutes;
-        }
-        return distance;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(mss);
+        return calendar.get(calendar.HOUR_OF_DAY) + ":" + calendar.get(calendar.MINUTE);
     }
 
     public static long getTime(){

@@ -11,6 +11,7 @@ import java.io.Serializable;
  */
 @Table(name = "tb_drive_record")
 public class DriveRecord implements Serializable{
+    private static final long serialVersionUID = -7060210544600464481L;
 
     @Column(name = "recordId", isId = true)
     private int recordId;

@@ -1,5 +1,7 @@
 package me.xucan.safedrive.net;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.android.volley.AuthFailureError;
@@ -10,6 +12,8 @@ import com.android.volley.toolbox.StringRequest;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import me.xucan.safedrive.util.EncodeUtil;
 
 /**
  * @author xucan
@@ -30,6 +34,7 @@ public class MJsonRequest {
 		request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 			@Override
 			public void onResponse(String response) {
+				Log.i("response","url" + "..." + response);
 				JSONObject object = JSON.parseObject(response);
 				if (object != null && object.containsKey("status")){
 					if (object.getIntValue("status") == 200){
@@ -51,6 +56,7 @@ public class MJsonRequest {
 		}){
 			@Override
 			protected Map<String, String> getParams() throws AuthFailureError {
+				String request = "";
 				Map<String, String> map = new HashMap<>();
 				for (String key  : params.keySet()){
 					Object obj = params.get(key);
@@ -58,12 +64,15 @@ public class MJsonRequest {
 					//基本类型
 					if (clazz.equals(String.class.toString()) || clazz.equals(int.class.toString()) ||
 							clazz.equals(long.class.toString()) || clazz.equals(boolean.class.toString())){
-						map.put(key, String.valueOf(obj));
+						map.put(key, EncodeUtil.toUtf8(String.valueOf(obj)));
+						request += key + "=" + String.valueOf(obj);
 					}else{
-						map.put(key, JSON.toJSONString(obj));
+						map.put(key, EncodeUtil.toUtf8(JSON.toJSONString(obj)));
+						request += key + "=" + JSON.toJSONString(obj);
 					}
 
 				}
+				Log.i("request",url+ "..." + request);
 				return map;
 			}
 		};

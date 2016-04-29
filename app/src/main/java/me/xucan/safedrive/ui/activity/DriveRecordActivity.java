@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import me.xucan.safedrive.R;
+import me.xucan.safedrive.bean.DriveEvent;
 import me.xucan.safedrive.bean.DriveRecord;
-import me.xucan.safedrive.bean.EventWarn;
 import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;
 import me.xucan.safedrive.net.NetParams;
@@ -52,7 +52,7 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
     @ViewInject(R.id.rv_event_warn)
     private RecyclerView recyclerView;
     private EventAdapter adapter;
-    private List<EventWarn> eventWarnList;
+    private List<DriveEvent> eventList;
     private int recordId;
 
     @Override
@@ -65,14 +65,14 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
     }
 
     void initData(){
-        eventWarnList = new ArrayList<>();
-        adapter = new EventAdapter(eventWarnList);
+        eventList = new ArrayList<>();
+        adapter = new EventAdapter(eventList);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         Map<String,Object> map = new HashMap<>();
         map.put("recordId", recordId);
-        new MJsonRequest(NetParams.URL_DRIVE_EVENT_WARN, map, this).startRequest();
+        new MJsonRequest(NetParams.URL_EVENT_GET, map, this).startRequest();
     }
 
     void extraIntent(){
@@ -89,12 +89,12 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
     @Override
     public void onSuccess(String requestUrl, JSONObject response) {
         switch (requestUrl){
-            case NetParams.URL_DRIVE_EVENT_WARN:
-                JSONArray jsonArray = response.getJSONArray("eventWarns");
+            case NetParams.URL_EVENT_GET:
+                JSONArray jsonArray = response.getJSONArray("events");
                 for (int i = 0; i < jsonArray.size(); i++){
                     JSONObject object = (JSONObject)jsonArray.get(i);
-                    EventWarn eventWarn = JSON.toJavaObject(object, EventWarn.class);
-                    eventWarnList.add(eventWarn);
+                    DriveEvent event = JSON.toJavaObject(object, DriveEvent.class);
+                    eventList.add(event);
                 }
                 adapter.notifyDataSetChanged();
                 break;

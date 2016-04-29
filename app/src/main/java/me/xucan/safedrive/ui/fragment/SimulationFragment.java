@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,9 +33,8 @@ import me.xucan.safedrive.App;
 import me.xucan.safedrive.R;
 import me.xucan.safedrive.bean.DriveEvent;
 import me.xucan.safedrive.bean.DriveRecord;
-import me.xucan.safedrive.bean.DriveWarn;
-import me.xucan.safedrive.message.MessageEvent;
 import me.xucan.safedrive.db.MyDBManager;
+import me.xucan.safedrive.message.MessageEvent;
 import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;
 import me.xucan.safedrive.net.NetParams;
@@ -44,8 +42,8 @@ import me.xucan.safedrive.net.RequestManager;
 import me.xucan.safedrive.util.AppParams;
 import me.xucan.safedrive.util.DateUtil;
 import me.xucan.safedrive.util.EventType;
+import me.xucan.safedrive.util.FormatUtil;
 import me.xucan.safedrive.util.PositionUtil;
-import me.xucan.safedrive.util.SafeTyRules;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -89,11 +87,14 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     @ViewInject(R.id.ll_result)
     private LinearLayout llResult;
 
+    @ViewInject(R.id.ll_event)
+    private LinearLayout llEvent;
+
     @ViewInject(R.id.ll_get_result)
     private LinearLayout llGetResult;
 
     //当前车速(km/s)
-    private int speeds;
+    private int speeds = 60;
     //当前时间（毫秒）
     private long tiem;
     //安全指数(0~100)
@@ -136,8 +137,8 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     public void onMessageEvent(MessageEvent event){
         switch (event.message){
             case EVENT_DRIVE_WARN:
-                DriveWarn warn = (DriveWarn) event.data;
-                String state = SafeTyRules.getState(warn);
+                DriveEvent driveEvent = (DriveEvent) event.data;
+                String state = EventType.getTip(driveEvent);
                 tvState.setText(state);
                 break;
         }
@@ -145,7 +146,9 @@ public class SimulationFragment extends Fragment implements MRequestListener{
 
     void initView(){
         //设置当前时间
-        tvTime.setText(DateUtil.parseMillis(DateUtil.getTime()));
+        tiem = DateUtil.getTime();
+        tvTime.setText(DateUtil.parseMillis(tiem));
+        tvSpeeds.setText(speeds + "km/h");
 
     }
 
@@ -182,7 +185,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 sendDriveEvent(EventType.JITTER);
                 break;
             case R.id.btn_overspeed:
-                sendDriveEvent(EventType.OVERSPEED);
+                sendDriveEvent(EventType.OVERSPEEDS);
                 break;
             case R.id.btn_skewing:
                 sendDriveEvent(EventType.SKEWING);
@@ -238,10 +241,10 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         event.setType(type);
         event.setTime(DateUtil.getTime());
         Map<String,Object> map = new HashMap<>();
+        map.put("event", event);
         map.put("userId", App.getInstance().getUserId());
-        map.put("event", JSON.toJSONString(event));
         //发送请求
-        new MJsonRequest(NetParams.URL_DRIVE_EVENT, map, this).startRequest();
+        new MJsonRequest(NetParams.URL_EVENT_SEND, map, this).startRequest();
     }
 
     void changeSpeeds(boolean add){
@@ -261,6 +264,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 //开始行驶
                 running = true;
                 ivControl.setImageResource(R.mipmap.ic_stop);
+                llEvent.setVisibility(View.VISIBLE);
                 new MyThread(MSG_START_COUNT).start();
                 record.setRecordId(response.getInteger("recordId"));
                 break;
@@ -273,18 +277,16 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 llGetResult.setVisibility(View.GONE);
                 //显示结果
                 llResult.setVisibility(View.VISIBLE);
-                tvDistance.setText(record.getDistance()+"km");
-                tvDuration.setText(DateUtil.getDuration(record.getEndTime(),record.getStartTime()));
-                tvSafetyPoint.setText(record.getSafetyIndex()+"");
+                tvDistance.setText("全程" + FormatUtil.keepTwo(record.getDistance()) +"km");
+                tvDuration.setText("时长：" + DateUtil.getDuration(record.getStartTime(),record.getEndTime()));
+                tvSafetyPoint.setText("安全指数：" + record.getSafetyIndex());
                 //保存到本地
                 MyDBManager.getInstance().save(record);
                 //通知RecordsFragment更新事件
                 EventBus.getDefault().post(new MessageEvent(RecordsFragment.EVENT_ADD_RECORD,record));
                 break;
-            case NetParams.URL_DRIVE_EVENT:
-                DriveWarn warn = response.getObject("warn", DriveWarn.class);
-                String state = SafeTyRules.getState(warn);
-                tvState.setText(state);
+            case NetParams.URL_EVENT_SEND:
+
                 break;
         }
     }

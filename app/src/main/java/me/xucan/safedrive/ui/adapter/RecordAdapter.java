@@ -17,10 +17,12 @@ import me.xucan.safedrive.util.DateUtil;
  */
 public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder> {
 	private List<DriveRecord> records;
+	private ClickListener listener;
 
 
-	public RecordAdapter(List<DriveRecord> records) {
+	public RecordAdapter(List<DriveRecord> records, ClickListener listener) {
 		this.records = records;
+		this.listener = listener;
 	}
 
 	public class ViewHolder extends RecyclerView.ViewHolder {
@@ -78,6 +80,15 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 		viewHolder.tvDistance.setText(record.getDistance() + "km");
 		viewHolder.tvDuration.setText(DateUtil.getDuration(record.getEndTime(),
 				record.getStartTime()));
+		viewHolder.itemView.setTag(position);
+		viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(listener != null){
+					listener.onClick((int)v.getTag());
+				}
+			}
+		});
 	}
 
 	/*
@@ -92,6 +103,10 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_records_layout, parent, false);
 		
 		return new ViewHolder(view);
+	}
+
+	public interface ClickListener{
+		void onClick(int position);
 	}
 
 

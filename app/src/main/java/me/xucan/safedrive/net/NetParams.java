@@ -8,8 +8,13 @@ public class NetParams {
 
     public final static String URL_DRIVE_START = HOST+ "record/start";
     public final static String URL_DRIVE_STOP = HOST+ "record/stop";
-    public final static String URL_DRIVE_EVENT = HOST+ "record/event";
-    public final static String URL_DRIVE_EVENT_WARN = HOST+ "record/eventWarn";
     public final static String URL_DRIVE_GET = HOST+ "record/get";
+
+    public final static String URL_EVENT_SEND = HOST+ "event/send";
+    public final static String URL_EVENT_GET = HOST+ "event/get";
+
+    public final static String URL_USER_REGISTER = HOST+ "user/register";
+    public final static String URL_USER_LOGIN = HOST+ "user/login";
+    public final static String URL_USER_UPDATE = HOST+ "user/update";
 
 }

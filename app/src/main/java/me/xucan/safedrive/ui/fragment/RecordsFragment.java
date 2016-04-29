@@ -1,6 +1,7 @@
 package me.xucan.safedrive.ui.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,7 @@ import me.xucan.safedrive.message.MessageEvent;
 import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;
 import me.xucan.safedrive.net.NetParams;
+import me.xucan.safedrive.ui.activity.DriveRecordActivity;
 import me.xucan.safedrive.ui.adapter.RecordAdapter;
 
 /**
@@ -51,7 +53,6 @@ public class RecordsFragment extends Fragment implements MRequestListener{
         View view = inflater.inflate(R.layout.fragment_records, container, false);
         x.view().inject(this, view);
         initView();
-        getData(0,10);
         return view;
     }
 
@@ -59,6 +60,7 @@ public class RecordsFragment extends Fragment implements MRequestListener{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        getData(0,10);
     }
 
     @Override
@@ -88,7 +90,13 @@ public class RecordsFragment extends Fragment implements MRequestListener{
 
     void initView(){
         records = new ArrayList<>();
-        adapter = new RecordAdapter(records);
+        adapter = new RecordAdapter(records, new RecordAdapter.ClickListener() {
+            @Override
+            public void onClick(int position) {
+                Intent intent = new Intent(getActivity(), DriveRecordActivity.class);
+                intent.putExtra("record",records.get(position));
+            }
+        });
         rvRecord.setAdapter(adapter);
         rvRecord.setHasFixedSize(true);
         rvRecord.setLayoutManager(new LinearLayoutManager(getActivity()));

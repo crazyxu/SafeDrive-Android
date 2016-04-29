@@ -10,17 +10,18 @@ import android.widget.TextView;
 import java.util.List;
 
 import me.xucan.safedrive.R;
-import me.xucan.safedrive.bean.EventWarn;
+import me.xucan.safedrive.bean.DriveEvent;
 import me.xucan.safedrive.util.DateUtil;
+import me.xucan.safedrive.util.EventType;
 
 /**
  * @author xucan
  */
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
-	private List<EventWarn> eventWarns;
+	private List<DriveEvent> events;
 
-	public EventAdapter(List<EventWarn> eventWarns) {
-		this.eventWarns = eventWarns;
+	public EventAdapter(List<DriveEvent> events) {
+		this.events = events;
 	}
 
 	public class ViewHolder extends RecyclerView.ViewHolder {
@@ -49,7 +50,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 	@Override
 	public int getItemCount() {
 		// TODO Auto-generated method stub
-		return eventWarns == null ? 0 : eventWarns.size();
+		return events == null ? 0 : events.size();
 	}
 
 	/*
@@ -62,15 +63,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 	@Override
 	public void onBindViewHolder(ViewHolder viewHolder, int position) {
 		// TODO Auto-generated method stub
-		EventWarn eventWarn = eventWarns.get(position);
-		if (eventWarn != null){
-			if (eventWarn.getType() == 0){
+		DriveEvent event = events.get(position);
+		if (event != null){
+			if (EventType.isWarn(event.getType())){
 				viewHolder.ivType.setImageResource(R.mipmap.ic_event);
-			}else if(eventWarn.getType() == 1){
+			}else if(event.getType() == 1){
 				viewHolder.ivType.setImageResource(R.mipmap.icon_warn);
 			}
-			viewHolder.tvEvents.setText(eventWarn.getMsg());
-			viewHolder.tvTime.setText(DateUtil.getSimplifyDate(eventWarn.getTime()));
+			viewHolder.tvEvents.setText(EventType.getTip(event));
+			viewHolder.tvTime.setText(DateUtil.getSimplifyDate(event.getTime()));
 		}
 
 	}
