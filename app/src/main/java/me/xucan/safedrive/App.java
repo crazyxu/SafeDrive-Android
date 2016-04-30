@@ -6,8 +6,8 @@ import android.content.Context;
 
 import org.xutils.x;
 
-import io.rong.imlib.AnnotationNotFoundException;
 import io.rong.imlib.RongIMClient;
+import io.rong.imlib.ipc.RongExceptionHandler;
 import me.xucan.safedrive.message.DriveWarnMessage;
 
 /**
@@ -44,19 +44,28 @@ public class App extends Application {
         app = this;
         context = this.getApplicationContext();
         x.Ext.init(this);
-        /**
-         * OnCreate 会被多个进程重入，这段保护代码，确保只有您需要使用 RongIMClient 的进程和 Push 进程执行了 init。
-         * io.rong.push 为融云 push 进程名称，不可修改。
-         */
         if (getApplicationInfo().packageName.equals(getCurProcessName(getApplicationContext())) ||
                 "io.rong.push".equals(getCurProcessName(getApplicationContext()))) {
+
             RongIMClient.init(this);
-            RongCloudEvent.init(this);
-            try {
-                //注册自定义消息
-                RongIMClient.registerMessageType(DriveWarnMessage.class);
-            } catch (AnnotationNotFoundException e) {
-                e.printStackTrace();
+
+            /**
+             * 融云SDK事件监听处理
+             *
+             * 注册相关代码，只需要在主进程里做。
+             */
+            if (getApplicationInfo().packageName.equals(getCurProcessName(getApplicationContext()))) {
+
+                RongCloudEvent.init(this);
+
+                Thread.setDefaultUncaughtExceptionHandler(new RongExceptionHandler(this));
+
+                try {
+                    RongIMClient.registerMessageType(DriveWarnMessage.class);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

@@ -2,8 +2,13 @@ package me.xucan.safedrive.message;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 
 import io.rong.common.ParcelUtils;
 import io.rong.common.RLog;
@@ -14,10 +19,7 @@ import io.rong.imlib.model.MessageContent;
  * Created by xcytz on 2016/4/24.
  */
 
-@MessageTag(
-        value = "SD:DriveWarnMsg",
-        flag= MessageTag.ISCOUNTED| MessageTag.ISPERSISTED
-)
+@MessageTag(value = "SD:DriveWarnMsg")
 public class DriveWarnMessage extends MessageContent{
     public final static String tag = "SD:DriveWarnMsg";
     private String content;
@@ -31,6 +33,21 @@ public class DriveWarnMessage extends MessageContent{
             return new DriveWarnMessage[size];
         }
     };
+
+    public DriveWarnMessage(byte[] data) {
+        String jsonStr = null;
+        try {
+            jsonStr = new String(data, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(jsonStr);
+            setContent(jsonObj.getString("content"));
+        } catch (JSONException e) {
+            Log.e("JSONException", e.getMessage());
+        }
+    }
 
 
 
@@ -72,6 +89,8 @@ public class DriveWarnMessage extends MessageContent{
         msg.setContent(content);
         return msg;
     }
+
+
 
     public DriveWarnMessage (){}
 }

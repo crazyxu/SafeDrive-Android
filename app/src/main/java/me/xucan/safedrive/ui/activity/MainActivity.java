@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     void testRegister(){
         User user = new User();
-        user.setUserName("徐灿");
+        user.setUserName("system");
         user.setPassword("123456");
         Map<String, Object> map = new HashMap<>();
         map.put("user", user);
