@@ -9,21 +9,10 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSONObject;
-
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import me.xucan.safedrive.App;
 import me.xucan.safedrive.R;
-import me.xucan.safedrive.bean.User;
-import me.xucan.safedrive.message.RongManager;
-import me.xucan.safedrive.net.MJsonRequest;
-import me.xucan.safedrive.net.MRequestListener;
-import me.xucan.safedrive.net.NetParams;
 import me.xucan.safedrive.ui.fragment.IndexFragment;
 import me.xucan.safedrive.ui.fragment.MyFragment;
 import me.xucan.safedrive.ui.fragment.RecordsFragment;
@@ -55,51 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         x.view().inject(this);
         initView();
-        testLogin();
     }
 
-    void testLogin(){
-        User user = new User();
-        user.setUserName("徐灿");
-        user.setPassword("123456");
-        Map<String, Object> map = new HashMap<>();
-        map.put("user", user);
-        new MJsonRequest(NetParams.URL_USER_LOGIN, map, new MRequestListener() {
-            @Override
-            public void onSuccess(String requestUrl, JSONObject response) {
-                //登陆成功
-                User user = response.getObject("user", User.class);
-                App.getInstance().setUserId(user.getUserId());
-                App.getInstance().setToken(user.getToken());
-                RongManager.connect();
-            }
-
-            @Override
-            public void onError(String requestUrl, int errCode, String errMsg) {
-
-            }
-        }).startRequest();
-    }
-
-    void testRegister(){
-        User user = new User();
-        user.setUserName("system");
-        user.setPassword("123456");
-        Map<String, Object> map = new HashMap<>();
-        map.put("user", user);
-        new MJsonRequest(NetParams.URL_USER_REGISTER, map, new MRequestListener() {
-            @Override
-            public void onSuccess(String requestUrl, JSONObject response) {
-                User user = response.getObject("user", User.class);
-                App.getInstance().setUserId(user.getUserId());
-            }
-
-            @Override
-            public void onError(String requestUrl, int errCode, String errMsg) {
-
-            }
-        }).startRequest();
-    }
 
     void initView(){
         tabHost.setup(this, getSupportFragmentManager(), R.id.layout);
@@ -131,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             textView.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
             imageView.setImageResource(arrIconSelected[tabId]);
         }else {
-            textView.setTextColor(ContextCompat.getColor(this, R.color.colorGray));
+            textView.setTextColor(ContextCompat.getColor(this, R.color.colorGrayLight));
             imageView.setImageResource(arrIcon[tabId]);
         }
     }

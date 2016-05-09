@@ -1,9 +1,18 @@
 package me.xucan.safedrive.bean;
 
 public class User {
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	private String phone;
 	private String userName;
 	private int userId;
-	private String portraitUri;
+	private String portraitUrl;
 	private String token;
 
 	public String getPassword() {
@@ -27,11 +36,11 @@ public class User {
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-	public String getPortraitUri() {
-		return portraitUri;
+	public String getPortraitUrl() {
+		return portraitUrl;
 	}
-	public void setPortraitUri(String portraitUri) {
-		this.portraitUri = portraitUri;
+	public void setPortraitUrl(String portraitUrl) {
+		this.portraitUrl = portraitUrl;
 	}
 	public String getToken() {
 		return token;

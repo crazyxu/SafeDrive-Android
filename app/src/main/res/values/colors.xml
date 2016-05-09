@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#00fd7f</color>
-    <color name="colorPrimaryDark">#00fd7f</color>
-    <color name="colorAccent">#00fd7f</color>
-    <color name="colorGray">#d1d1d1</color>
-    <color name="colorDarkGray">#585757</color>
+    <color name="colorPrimary">#4fac11</color>
+    <color name="colorPrimaryDark">#368600</color>
+    <color name="colorAccent">#3b45b7</color>
+
+    <color name="colorGrayLight">#d1d1d1</color>
+    <color name="colorDarkGray">#414141</color>
     <!--list 背景色，点击色-->
     <color name="colorListBg">#ffffff</color>
     <color name="colorListBgPressed">#ededed</color>
