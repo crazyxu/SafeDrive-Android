@@ -3,7 +3,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="me.xucan.safedrive.ui.fragment.MyFragment">
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="我的"/>
+    <me.xucan.safedrive.ui.widget.CustomItem
+        android:id="@+id/ci_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:leftTv="用户名"
+        app:bottomDivider="true"
+        />
+    <me.xucan.safedrive.ui.widget.CustomItem
+        android:id="@+id/ci_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:leftTv="手机号"
+        app:bottomDivider="true"
+        />
+    <me.xucan.safedrive.ui.widget.CustomItem
+        android:id="@+id/ci_urgent_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:leftTv="紧急号码"
+        />
 
+    <me.xucan.safedrive.ui.widget.CustomItem
+        android:id="@+id/ci_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:leftTv="注销"
+        app:rightArrow="false"
+        android:layout_marginTop="25dp"
+        />
 
 </LinearLayout>

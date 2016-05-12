@@ -32,6 +32,15 @@ public class CustomItem extends RelativeLayout{
     //底部分割线
     private View divider;
 
+    public void setLeftTitle(String title){
+        leftTv.setText(title);
+    }
+
+    public void setRightTv(String text){
+        rightTv.setText(text);
+        rightTv.setVisibility(VISIBLE);
+    }
+
 
     public CustomItem(Context context) {
         this(context, null, 0);

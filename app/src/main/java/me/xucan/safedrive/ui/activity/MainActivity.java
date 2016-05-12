@@ -13,22 +13,21 @@ import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
 import me.xucan.safedrive.R;
-import me.xucan.safedrive.ui.fragment.IndexFragment;
 import me.xucan.safedrive.ui.fragment.MyFragment;
 import me.xucan.safedrive.ui.fragment.RecordsFragment;
 import me.xucan.safedrive.ui.fragment.SimulationFragment;
 
 public class MainActivity extends AppCompatActivity {
     //导航栏标题
-    private String arrTitle[] = {"安全驾驶", "模拟行驶", "行驶记录", "我"};
+    private String arrTitle[] = {"模拟行驶", "行驶记录", "我"};
     //导航栏图标
-    private int arrIcon[] = {R.mipmap.ic_car_gray, R.mipmap.ic_fxp_gray, R.mipmap.ic_records_gray
+    private int arrIcon[] = {R.mipmap.ic_car_gray, R.mipmap.ic_records_gray
         ,R.mipmap.ic_user_gray};
     //选择状态下的图标
-    private int arrIconSelected[] = {R.mipmap.ic_car_blue, R.mipmap.ic_fxp_blue, R.mipmap.ic_records_blue
+    private int arrIconSelected[] = {R.mipmap.ic_car_blue,  R.mipmap.ic_records_blue
             ,R.mipmap.ic_user_blue};
     //
-    private Class arrFragment[] = {IndexFragment.class, SimulationFragment.class, RecordsFragment.class,
+    private Class arrFragment[] = {SimulationFragment.class, RecordsFragment.class,
             MyFragment.class};
     @ViewInject(R.id.tab_host)
     private FragmentTabHost tabHost;

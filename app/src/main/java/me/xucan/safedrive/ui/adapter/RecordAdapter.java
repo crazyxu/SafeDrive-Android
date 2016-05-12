@@ -73,11 +73,11 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 		DriveRecord record = records.get(position);
 		if (record == null)
 			return;
-		viewHolder.tvStartTime.setText(DateUtil.getSimplifyDate(record.getStartTime()));
-		viewHolder.tvSafetyPoint.setText(record.getSafetyIndex()+"");
+		viewHolder.tvStartTime.setText(DateUtil.getDate(record.getStartTime()));
+		viewHolder.tvSafetyPoint.setText("安全指数:" + record.getSafetyIndex());
 		viewHolder.tvStartPlace.setText(record.getStartPlace());
 		viewHolder.tvEndPlace.setText(record.getEndPlace());
-		viewHolder.tvDistance.setText(record.getDistance() + "km");
+		viewHolder.tvDistance.setText(record.getDistance() + "公里");
 		viewHolder.tvDuration.setText(DateUtil.getDuration(record.getEndTime(),
 				record.getStartTime()));
 		viewHolder.itemView.setTag(position);

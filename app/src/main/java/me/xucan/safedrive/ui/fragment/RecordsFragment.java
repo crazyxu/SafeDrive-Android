@@ -35,6 +35,7 @@ import me.xucan.safedrive.net.MRequestListener;
 import me.xucan.safedrive.net.NetParams;
 import me.xucan.safedrive.ui.activity.DriveRecordActivity;
 import me.xucan.safedrive.ui.adapter.RecordAdapter;
+import me.xucan.safedrive.ui.widget.DividerItemDecoration;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,6 +61,15 @@ public class RecordsFragment extends Fragment implements MRequestListener{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        records = new ArrayList<>();
+        adapter = new RecordAdapter(records, new RecordAdapter.ClickListener() {
+            @Override
+            public void onClick(int position) {
+                Intent intent = new Intent(getActivity(), DriveRecordActivity.class);
+                intent.putExtra("record",records.get(position));
+                startActivity(intent);
+            }
+        });
         getData(0,10);
     }
 
@@ -78,7 +88,7 @@ public class RecordsFragment extends Fragment implements MRequestListener{
         switch (event.message) {
             //增加record
             case EVENT_ADD_RECORD:
-                DriveRecord record = (DriveRecord) event.data;
+                DriveRecord record = event.object.getObject("record", DriveRecord.class);
                 if (record != null){
                     records.add(record);
                     adapter.notifyDataSetChanged();
@@ -89,17 +99,10 @@ public class RecordsFragment extends Fragment implements MRequestListener{
     }
 
     void initView(){
-        records = new ArrayList<>();
-        adapter = new RecordAdapter(records, new RecordAdapter.ClickListener() {
-            @Override
-            public void onClick(int position) {
-                Intent intent = new Intent(getActivity(), DriveRecordActivity.class);
-                intent.putExtra("record",records.get(position));
-            }
-        });
         rvRecord.setAdapter(adapter);
         rvRecord.setHasFixedSize(true);
         rvRecord.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvRecord.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
     }
 
     void getData(int from, int to){

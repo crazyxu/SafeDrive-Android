@@ -41,10 +41,24 @@ public class LoginActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         x.view().inject(this);
+        autoLogin();
+
+    }
+
+    private void autoLogin(){
+        User user = MySp.getUser();
+        if (user != null && user.getUserId() != 0){
+            App.getInstance().setUserId(user.getUserId());
+            App.getInstance().setToken(user.getToken());
+            RongManager.connect();
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            LoginActivity.this.finish();
+        }
     }
 
     public void register(View v){
         startActivity(new Intent(this, RegisterActivity.class));
+        finish();
     }
 
     public void login(View v){
@@ -70,6 +84,7 @@ public class LoginActivity extends AppCompatActivity{
                 MySp.saveUser(user);
                 RongManager.connect();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                LoginActivity.this.finish();
             }
 
             @Override

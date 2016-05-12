@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -25,9 +27,13 @@ import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;
 import me.xucan.safedrive.net.NetParams;
 import me.xucan.safedrive.ui.adapter.EventAdapter;
+import me.xucan.safedrive.ui.widget.DividerItemDecoration;
 import me.xucan.safedrive.util.DateUtil;
 
 public class DriveRecordActivity extends AppCompatActivity implements MRequestListener {
+    @ViewInject(R.id.toolbar)
+    private Toolbar toolbar;
+
     @ViewInject(R.id.tv_start_time)
     private TextView tvStartTime;
 
@@ -70,6 +76,7 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         Map<String,Object> map = new HashMap<>();
         map.put("recordId", recordId);
         new MJsonRequest(NetParams.URL_EVENT_GET, map, this).startRequest();
@@ -77,13 +84,17 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
 
     void extraIntent(){
         DriveRecord record = (DriveRecord) getIntent().getSerializableExtra("record");
-        tvStartPlace.setText(record.getStartPlace());
-        tvEndPlace.setText(record.getEndPlace());
-        tvStartTime.setText(DateUtil.getSimplifyDate(record.getStartTime()));
-        tvEndTime.setText(DateUtil.getSimplifyDate(record.getEndTime()));
+        recordId = record.getRecordId();
+        tvStartPlace.setText(record.getStartPlace() + "");
+        tvEndPlace.setText(record.getEndPlace() + "");
+        tvStartTime.setText(DateUtil.getSimplifyTime(record.getStartTime()));
+        tvEndTime.setText(DateUtil.getSimplifyTime(record.getEndTime()));
         tvDuration.setText(DateUtil.getDuration(record.getStartTime(), record.getEndTime()));
-        tvDistance.setText(record.getDistance()+"km");
-        tvSafetyIndex.setText(record.getSafetyIndex());
+        tvDistance.setText(record.getDistance()+"公里");
+        tvSafetyIndex.setText("安全指数:" + record.getSafetyIndex());
+        toolbar.setTitle("湖北荆州 " + DateUtil.getSimplifyDate(record.getStartTime()));
+        setSupportActionBar(toolbar);
+
     }
 
     @Override
@@ -104,5 +115,12 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
     @Override
     public void onError(String requestUrl, int errCode, String errMsg) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            finish();
+        return super.onOptionsItemSelected(item);
     }
 }

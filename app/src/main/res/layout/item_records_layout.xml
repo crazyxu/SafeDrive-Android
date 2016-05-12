@@ -2,31 +2,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:paddingLeft="15dp"
-    android:paddingRight="15dp">
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
     <TextView
         android:id="@+id/tv_start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="4/22 17:24 "
-        android:textSize="16sp"/>
+        android:textSize="13sp"/>
     <TextView
         android:id="@+id/tv_safety_index"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="80"
+        android:text="安全指数：80"
         android:layout_alignParentRight="true"
-        android:textSize="16sp"/>
+        android:textSize="13sp"/>
     <TextView
         android:id="@+id/tv_start_place"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="武汉"
-        android:textSize="18sp"
+        android:text="长江大学洗校区"
+        android:textSize="17sp"
         android:layout_below="@id/tv_start_time"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:textColor="@android:color/black"/>
     <ImageView
         android:layout_width="100dp"
@@ -37,8 +37,8 @@
         android:id="@+id/tv_end_place"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="荆州"
-        android:textSize="18sp"
+        android:text="长江大学东校区"
+        android:textSize="17sp"
         android:layout_alignTop="@id/tv_start_place"
         android:layout_alignParentRight="true"
         android:textColor="@android:color/black"/>
@@ -47,9 +47,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="100公里"
-        android:textSize="16sp"
+        android:textSize="13sp"
         android:layout_below="@id/tv_start_place"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="8dp"/>
     <TextView
         android:id="@+id/tv_distance"
         android:layout_width="wrap_content"
@@ -58,5 +58,5 @@
         android:layout_alignTop="@id/tv_duration"
         android:layout_toRightOf="@id/tv_duration"
         android:layout_marginLeft="20dp"
-        android:textSize="16sp"/>
+        android:textSize="13sp"/>
 </RelativeLayout>

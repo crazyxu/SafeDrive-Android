@@ -66,12 +66,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 		DriveEvent event = events.get(position);
 		if (event != null){
 			if (EventType.isWarn(event.getType())){
-				viewHolder.ivType.setImageResource(R.mipmap.ic_event);
-			}else if(event.getType() == 1){
 				viewHolder.ivType.setImageResource(R.mipmap.icon_warn);
+			}else{
+				viewHolder.ivType.setImageResource(R.mipmap.ic_event);
 			}
 			viewHolder.tvEvents.setText(EventType.getTip(event));
-			viewHolder.tvTime.setText(DateUtil.getSimplifyDate(event.getTime()));
+			viewHolder.tvTime.setText(DateUtil.getSimplifyTime(event.getTime()));
 		}
 
 	}
@@ -85,7 +85,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 	 */
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int arg1) {
-		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_records_layout, parent, false);
+		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_record_event_layout, parent, false);
 		
 		return new ViewHolder(view);
 	}

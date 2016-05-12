@@ -44,4 +44,13 @@ public class MySp {
         return user;
     }
 
+    /**
+     * 清除全部数据
+     */
+    public static void clear(){
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear();
+        editor.apply();
+    }
+
 }

@@ -1,14 +1,22 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="me.xucan.safedrive.ui.fragment.SimulationFragment">
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="模拟驾驶"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:background="@color/colorGrayLight"
         android:id="@+id/rl_state">
         <TextView
             android:id="@+id/tv_cur_time"
@@ -43,10 +51,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@id/rl_state"
-        android:layout_marginTop="20dp"
+        android:layout_margin="10dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="良好"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="拥堵"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="雨天"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="大雾"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:paddingRight="10dp"
-        android:paddingLeft="10dp">
+        android:paddingLeft="10dp"
+        android:layout_weight="1"
+        android:gravity="center">
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -114,80 +148,43 @@
                     android:text="查看详情"/>
             </LinearLayout>
         </RelativeLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_weight="0"
-            android:orientation="vertical"
-            android:id="@+id/ll_event"
-            android:visibility="invisible">
-            <Button
-                android:id="@+id/btn_speeds_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:text="加速"/>
-            <Button
-                android:id="@+id/btn_speeds_reduce"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="减速"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
-            <Button
-                android:id="@+id/btn_skewing"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="偏移"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
-            <Button
-                android:id="@+id/btn_fatigue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="疲劳"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
-            <Button
-                android:id="@+id/btn_Jitter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="抖动"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
-        </LinearLayout>
     </LinearLayout>
-
-
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:layout_centerHorizontal="true">
+        android:id="@+id/ll_event"
+        android:layout_margin="10dp">
+        <Button
+            android:id="@+id/btn_speeds_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="加速"/>
+        <Button
+            android:id="@+id/btn_speeds_reduce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="减速"/>
+        <Button
+            android:id="@+id/btn_skewing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="偏移"/>
+        <Button
+            android:id="@+id/btn_fatigue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="疲劳"/>
         <Button
             android:id="@+id/btn_brakes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="急刹"
-            android:layout_margin="10dp"/>
-        <Button
-            android:id="@+id/btn_crash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="追尾"/>
-        <Button
-            android:id="@+id/btn_overspeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="超速"
-            android:layout_margin="10dp"/>
-
+            android:layout_weight="1"
+            android:text="急刹"/>
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

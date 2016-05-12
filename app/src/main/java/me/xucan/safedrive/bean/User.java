@@ -1,6 +1,23 @@
 package me.xucan.safedrive.bean;
 
 public class User {
+	private String phone;
+	private String userName;
+	private int userId;
+	private String portraitUrl;
+	private String token;
+
+	public String getUrgentPhone() {
+		return urgentPhone;
+	}
+
+	public void setUrgentPhone(String urgentPhone) {
+		this.urgentPhone = urgentPhone;
+	}
+
+	//紧急联系
+	private String urgentPhone;
+
 	public String getPhone() {
 		return phone;
 	}
@@ -9,11 +26,7 @@ public class User {
 		this.phone = phone;
 	}
 
-	private String phone;
-	private String userName;
-	private int userId;
-	private String portraitUrl;
-	private String token;
+
 
 	public String getPassword() {
 		return password;

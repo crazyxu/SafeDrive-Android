@@ -17,4 +17,5 @@ public class NetParams {
     public final static String URL_USER_LOGIN = HOST+ "user/login";
     public final static String URL_USER_UPDATE = HOST+ "user/update";
 
+
 }

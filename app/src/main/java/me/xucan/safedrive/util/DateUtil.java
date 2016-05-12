@@ -17,25 +17,8 @@ public class DateUtil {
      * @return
      */
     public static String getDuration(long startTime, long endTime){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-        try {
-            Date startDate = new Date(startTime);
-            Date endDate = new Date(endTime);
-            long mss = endDate.getTime() - startDate.getTime();
-            long hours = (mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
-            long minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
-            String distance = "";
-            if (hours != 0){
-                distance += hours + "小时";
-            }
-            if (minutes != 0){
-                distance += minutes + "分钟";
-            }
-            return distance;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
+        SimpleDateFormat sdf = new SimpleDateFormat("HH时mm分", Locale.CHINA);
+        return sdf.format(endTime - startTime);
     }
 
     /**
@@ -43,8 +26,7 @@ public class DateUtil {
      * @param time
      * @return
      */
-    public static String getSimplifyDate(long time){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+    public static String getDate(long time){
         SimpleDateFormat newSdf = new SimpleDateFormat("MM月dd日 HH:mm", Locale.CHINA);
         try {
             Date date = new Date(time);
@@ -54,6 +36,16 @@ public class DateUtil {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String getSimplifyDate(long time){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.CHINA);
+        return sdf.format(time);
+    }
+
+    public static String getSimplifyTime(long time){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        return sdf.format(time);
     }
 
     /**

@@ -1,7 +1,6 @@
 package me.xucan.safedrive;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 
@@ -9,7 +8,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
-import me.xucan.safedrive.bean.DriveEvent;
 import me.xucan.safedrive.message.DriveWarnMessage;
 import me.xucan.safedrive.message.MessageEvent;
 import me.xucan.safedrive.ui.fragment.SimulationFragment;
@@ -75,10 +73,9 @@ public class RongCloudEvent implements RongIMClient.OnReceiveMessageListener{
     public boolean onReceived(Message message, int i) {
         if (message.getObjectName().equals(DriveWarnMessage.tag)){
             DriveWarnMessage warnMessage = (DriveWarnMessage) message.getContent();
-            DriveEvent driveEvent = JSON.parseObject(warnMessage.getContent(), DriveEvent.class);
-            EventBus.getDefault().post(new MessageEvent(SimulationFragment.EVENT_DRIVE_WARN, driveEvent));
+            EventBus.getDefault().post(new MessageEvent(SimulationFragment.EVENT_DRIVE_WARN,
+                    JSON.parseObject(warnMessage.getContent())));
         }
-        Log.i("onReceived", message.toString());
         return false;
     }
 

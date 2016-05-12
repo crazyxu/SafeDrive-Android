@@ -7,15 +7,13 @@
     <FrameLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"/>
     <android.support.v4.app.FragmentTabHost
         android:background="@android:color/white"
         android:id="@+id/tab_host"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="2dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
         />
 </RelativeLayout>

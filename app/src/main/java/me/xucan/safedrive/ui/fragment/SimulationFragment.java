@@ -25,6 +25,7 @@ import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,9 +88,6 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     @ViewInject(R.id.ll_result)
     private LinearLayout llResult;
 
-    @ViewInject(R.id.ll_event)
-    private LinearLayout llEvent;
-
     @ViewInject(R.id.ll_get_result)
     private LinearLayout llGetResult;
 
@@ -137,9 +135,14 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     public void onMessageEvent(MessageEvent event){
         switch (event.message){
             case EVENT_DRIVE_WARN:
-                DriveEvent driveEvent = (DriveEvent) event.data;
-                String state = EventType.getTip(driveEvent);
-                tvState.setText(state);
+                DriveEvent driveEvent = event.object.getObject("event", DriveEvent.class);
+                if (driveEvent != null){
+                    String state = EventType.getTip(driveEvent);
+                    tvState.setText(state);
+                }
+                safetyPoint = event.object.getIntValue("safetyIndex");
+                if (safetyPoint != 0)
+                    tvSafetyPoint.setText("安全指数:" + safetyPoint);
                 break;
         }
     }
@@ -152,9 +155,8 @@ public class SimulationFragment extends Fragment implements MRequestListener{
 
     }
 
-    @Event(value = {R.id.btn_brakes, R.id.btn_fatigue, R.id.btn_Jitter,
-        R.id.btn_overspeed, R.id.btn_skewing, R.id.btn_speeds_add, R.id.btn_speeds_reduce,
-            R.id.btn_crash, R.id.iv_control})
+    @Event(value = {R.id.btn_brakes, R.id.btn_fatigue, R.id.btn_skewing, R.id.btn_speeds_add, R.id.btn_speeds_reduce,
+            R.id.iv_control})
     private void OnClick(View view){
         switch (view.getId()){
             case R.id.iv_control:
@@ -170,34 +172,26 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                     ivGettingResult.startAnimation(animation);
                     endDrive();
                 }else {
-
                     //发送请求
                     startDrive();
                 }
                 break;
             case R.id.btn_brakes:
-                sendDriveEvent(EventType.BRAKES);
+                sendDriveEvent(EventType.EVENT_BRAKES);
                 break;
             case R.id.btn_fatigue:
-                sendDriveEvent(EventType.FATIGUE);
-                break;
-            case R.id.btn_Jitter:
-                sendDriveEvent(EventType.JITTER);
-                break;
-            case R.id.btn_overspeed:
-                sendDriveEvent(EventType.OVERSPEEDS);
+                sendDriveEvent(EventType.EVENT_FATIGUE);
                 break;
             case R.id.btn_skewing:
-                sendDriveEvent(EventType.SKEWING);
-                break;
-            case R.id.btn_crash:
-                sendDriveEvent(EventType.CRASH);
+                sendDriveEvent(EventType.EVENT_SKEWING);
                 break;
             case R.id.btn_speeds_add:
                 changeSpeeds(true);
+                sendDriveEvent(EventType.EVENT_ACCELERATION);
                 break;
             case R.id.btn_speeds_reduce:
                 changeSpeeds(false);
+                sendDriveEvent(EventType.EVENT_DECELERATION);
                 break;
 
         }
@@ -223,6 +217,8 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         Map<String,Object> map = new HashMap<>();
         record.setEndTime(new Date().getTime());
         record.setEndPlace(PositionUtil.getPosition());
+        BigDecimal bg = new BigDecimal(distance);
+        distance = bg.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
         record.setDistance(distance);
         map.put("record", record);
 
@@ -264,7 +260,6 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 //开始行驶
                 running = true;
                 ivControl.setImageResource(R.mipmap.ic_stop);
-                llEvent.setVisibility(View.VISIBLE);
                 new MyThread(MSG_START_COUNT).start();
                 record.setRecordId(response.getInteger("recordId"));
                 break;
@@ -283,7 +278,9 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 //保存到本地
                 MyDBManager.getInstance().save(record);
                 //通知RecordsFragment更新事件
-                EventBus.getDefault().post(new MessageEvent(RecordsFragment.EVENT_ADD_RECORD,record));
+                JSONObject object = new JSONObject();
+                object.put("record", record);
+                EventBus.getDefault().post(new MessageEvent(RecordsFragment.EVENT_ADD_RECORD,object));
                 break;
             case NetParams.URL_EVENT_SEND:
 
