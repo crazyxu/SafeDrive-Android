@@ -27,6 +27,7 @@ public class MySp {
         editor.putString("phone", user.getPhone());
         editor.putString("token", user.getToken());
         editor.putString("portraitUrl", user.getPortraitUrl());
+        editor.putString("urgentPhone", user.getUrgentPhone());
         editor.apply();
     }
 
@@ -41,6 +42,7 @@ public class MySp {
         user.setPortraitUrl(sp.getString("portraitUrl", ""));
         user.setToken(sp.getString("token", ""));
         user.setUserId(sp.getInt("userId", 0));
+        user.setUrgentPhone(sp.getString("urgentPhone",""));
         return user;
     }
 

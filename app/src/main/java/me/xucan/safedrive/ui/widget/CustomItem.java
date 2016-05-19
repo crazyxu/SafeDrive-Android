@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -140,20 +141,11 @@ public class CustomItem extends RelativeLayout{
 
     }
 
-    //设置layout点击事件
-    public void setOnClickListener(final OnLayoutClickListener listener){
-        if (listener != null)
-            this.setOnClickListener(new OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    listener.onClick(v);
-                }
-            });
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return true;
     }
 
 
-    public interface OnLayoutClickListener{
-        void onClick(View view);
-    }
 }

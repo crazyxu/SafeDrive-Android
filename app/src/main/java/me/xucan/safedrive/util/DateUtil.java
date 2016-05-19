@@ -1,7 +1,6 @@
 package me.xucan.safedrive.util;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -17,8 +16,14 @@ public class DateUtil {
      * @return
      */
     public static String getDuration(long startTime, long endTime){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH时mm分", Locale.CHINA);
-        return sdf.format(endTime - startTime);
+        int second = (int) ((endTime -  startTime)/1000);
+        int hour = second/3600;
+        int minute = (second - hour*3600)/60 +1;
+        String res = "";
+        if (hour != 0)
+            res += hour + "小时";
+        res += minute + "分钟";
+        return res;
     }
 
     /**
@@ -48,16 +53,6 @@ public class DateUtil {
         return sdf.format(time);
     }
 
-    /**
-     * 获取当前时分
-     * @param mss
-     * @return
-     */
-    public static String parseMillis(long mss){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(mss);
-        return calendar.get(calendar.HOUR_OF_DAY) + ":" + calendar.get(calendar.MINUTE);
-    }
 
     public static long getTime(){
         return new Date().getTime();

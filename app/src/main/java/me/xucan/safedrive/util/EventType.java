@@ -32,7 +32,10 @@ public class EventType {
     public final static int ENVIR_RAIN = 0x07;
 
     //交通大雾
-    public final static int ENVIR_FOG= 0x08;
+    public final static int ENVIR_FOG = 0x08;
+
+    //时间流逝
+    public final static int EVENT_NO = 0x09;
 
 
     //超速警告
@@ -43,6 +46,9 @@ public class EventType {
 
     //擦蹭警告
     public final static int WARN_FRACTION = 0x30;
+
+    //疲劳驾驶
+    public final static int WARN_FATIGUE = 0x40;
 
     public static String  getTip(DriveEvent event){
         if (event.getType() == -1){
@@ -70,6 +76,10 @@ public class EventType {
                 return "追尾风险";
             case WARN_FRACTION:
                 return "擦蹭风险";
+            case WARN_FATIGUE:
+                return "疲劳驾驶";
+            case EVENT_NO:
+                return "时间流逝";
         }
         return "未定义";
     }

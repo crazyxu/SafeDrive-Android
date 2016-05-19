@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,6 @@ import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,6 @@ import me.xucan.safedrive.message.MessageEvent;
 import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;
 import me.xucan.safedrive.net.NetParams;
-import me.xucan.safedrive.net.RequestManager;
 import me.xucan.safedrive.util.AppParams;
 import me.xucan.safedrive.util.DateUtil;
 import me.xucan.safedrive.util.EventType;
@@ -91,22 +90,28 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     @ViewInject(R.id.ll_get_result)
     private LinearLayout llGetResult;
 
+    //当前时间
+    private long curTime;
+
     //当前车速(km/s)
     private int speeds = 60;
-    //当前时间（毫秒）
-    private long tiem;
+
     //安全指数(0~100)
-    private int safetyPoint;
+    private int safetyIndex;
+
     //路程(km)
     private float distance;
+
     //运行状态
     private boolean running = false;
+
+    //最后一次发生事件的时间（疲劳，偏移，急刹，加速）,时间超过十分钟，指数上升
+    private long lastEventTime;
 
     //此次驾驶记录id
     private DriveRecord record = new DriveRecord();
 
     private MyHandler myHandler;
-    private RequestManager requestManager = RequestManager.getInstance();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,8 +126,14 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         View view = inflater.inflate(R.layout.fragment_simulation, container, false);
         x.view().inject(this, view);
         initView();
+        clear();
         myHandler = new MyHandler();
         return view;
+    }
+
+    private void clear(){
+        speeds = 60;
+        distance = 0;
     }
 
     @Override
@@ -136,21 +147,22 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         switch (event.message){
             case EVENT_DRIVE_WARN:
                 DriveEvent driveEvent = event.object.getObject("event", DriveEvent.class);
+                safetyIndex = event.object.getIntValue("safetyIndex");
+                if (safetyIndex != 0)
+                    tvState.setText("安全指数:" + safetyIndex);
                 if (driveEvent != null){
                     String state = EventType.getTip(driveEvent);
                     tvState.setText(state);
                 }
-                safetyPoint = event.object.getIntValue("safetyIndex");
-                if (safetyPoint != 0)
-                    tvSafetyPoint.setText("安全指数:" + safetyPoint);
                 break;
         }
     }
 
     void initView(){
         //设置当前时间
-        tiem = DateUtil.getTime();
-        tvTime.setText(DateUtil.parseMillis(tiem));
+        curTime = DateUtil.getTime();
+        lastEventTime = curTime;
+        tvTime.setText(DateUtil.getSimplifyTime(curTime));
         tvSpeeds.setText(speeds + "km/h");
 
     }
@@ -204,7 +216,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
     void startDrive(){
         Map<String,Object> map = new HashMap<>();
         record.setUserId(App.getInstance().getUserId());
-        record.setStartPlace(PositionUtil.getPosition());
+        record.setStartPlace(PositionUtil.getStartLocation());
         record.setStartTime(new Date().getTime());
         map.put("record", record);
         new MJsonRequest(NetParams.URL_DRIVE_START, map, this).startRequest();
@@ -215,13 +227,12 @@ public class SimulationFragment extends Fragment implements MRequestListener{
      */
     void endDrive(){
         Map<String,Object> map = new HashMap<>();
-        record.setEndTime(new Date().getTime());
-        record.setEndPlace(PositionUtil.getPosition());
-        BigDecimal bg = new BigDecimal(distance);
-        distance = bg.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+        record.setEndTime(curTime);
+        record.setEndPlace(PositionUtil.getEndLocation());
+        distance =FormatUtil.KeepTwo(distance);
         record.setDistance(distance);
+        record.setSafetyIndex(safetyIndex);
         map.put("record", record);
-
         //发送请求
         new MJsonRequest(NetParams.URL_DRIVE_STOP, map, this).startRequest();
 
@@ -235,7 +246,14 @@ public class SimulationFragment extends Fragment implements MRequestListener{
         DriveEvent event = new DriveEvent();
         event.setRecordId(record.getRecordId());
         event.setType(type);
-        event.setTime(DateUtil.getTime());
+        if(type == EventType.EVENT_ACCELERATION || type == EventType.EVENT_DECELERATION)
+            event.setExtra(String.valueOf(speeds));
+        if(type == EventType.EVENT_SKEWING || type == EventType.EVENT_ACCELERATION ||
+                type == EventType.EVENT_BRAKES || type == EventType.EVENT_FATIGUE ||
+                type == EventType.EVENT_NO){
+            lastEventTime = curTime;
+        }
+        event.setTime(curTime);
         Map<String,Object> map = new HashMap<>();
         map.put("event", event);
         map.put("userId", App.getInstance().getUserId());
@@ -262,19 +280,19 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 ivControl.setImageResource(R.mipmap.ic_stop);
                 new MyThread(MSG_START_COUNT).start();
                 record.setRecordId(response.getInteger("recordId"));
+                tvState.setText("正常行驶中");
                 break;
             case NetParams.URL_DRIVE_STOP:
-                int safetyIndex = response.getIntValue("safetyIndex");
-                record.setSafetyIndex(safetyIndex);
-
                 //更新ui，行车数据统计
                 ivGettingResult.clearAnimation();
                 llGetResult.setVisibility(View.GONE);
                 //显示结果
                 llResult.setVisibility(View.VISIBLE);
-                tvDistance.setText("全程" + FormatUtil.keepTwo(record.getDistance()) +"km");
+                tvDistance.setText("全程" + record.getDistance() +"km");
+                Log.i("duration", ""+(record.getEndTime() - record.getStartTime()));
                 tvDuration.setText("时长：" + DateUtil.getDuration(record.getStartTime(),record.getEndTime()));
-                tvSafetyPoint.setText("安全指数：" + record.getSafetyIndex());
+                tvSafetyPoint.setText("安全指数：" + safetyIndex);
+
                 //保存到本地
                 MyDBManager.getInstance().save(record);
                 //通知RecordsFragment更新事件
@@ -305,9 +323,14 @@ public class SimulationFragment extends Fragment implements MRequestListener{
             switch (msg.what){
                 case MSG_START_COUNT:
                     //一次计时
-                    tiem += AppParams.zoomMultiple*1000;
-                    tvTime.setText(DateUtil.parseMillis(tiem));
-                    distance += speeds*(AppParams.zoomMultiple/3600.0);
+                    curTime += AppParams.zoomMultiple*1000;
+                    tvTime.setText(DateUtil.getSimplifyTime(curTime));
+                    distance += speeds*(AppParams.zoomMultiple/3600f);
+                    //十分钟内没有事件
+                    if (curTime - lastEventTime >= 10*60*1000){
+                        sendDriveEvent(EventType.EVENT_NO);
+                        tvState.setText("安全指数:" + safetyIndex);
+                    }
                     break;
             }
         }

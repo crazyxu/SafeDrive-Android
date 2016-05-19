@@ -1,6 +1,7 @@
 package me.xucan.safedrive.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 		private ImageView ivType;
 		private TextView tvTime;
 		private TextView tvEvents;
+		private TextView tvExtra;
 
 		/**
 		 * @param itemView
@@ -38,6 +40,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 			ivType = (ImageView) itemView.findViewById(R.id.iv_type);
 			tvTime = (TextView) itemView.findViewById(R.id.tv_time);
 			tvEvents = (TextView) itemView.findViewById(R.id.tv_events);
+			tvExtra = (TextView) itemView.findViewById(R.id.tv_extra);
 		}
 
 	}
@@ -72,6 +75,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 			}
 			viewHolder.tvEvents.setText(EventType.getTip(event));
 			viewHolder.tvTime.setText(DateUtil.getSimplifyTime(event.getTime()));
+			String extra = event.getExtra();
+			if(!TextUtils.isEmpty(extra)){
+				if(event.getType() == EventType.EVENT_ACCELERATION)
+					extra += "km/h";
+				else if(event.getType() == EventType.EVENT_NO)
+					extra = "安全指数:" + extra;
+				viewHolder.tvExtra.setText(extra);
+			}
+
 		}
 
 	}

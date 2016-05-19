@@ -5,6 +5,15 @@ package me.xucan.safedrive.bean;
  * 行车过程中的事件
  */
 public class DriveEvent {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private int id;
     //事件类型
     private int type;
     //一次出行DriveRecord Id

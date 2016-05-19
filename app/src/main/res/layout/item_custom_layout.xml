@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="55dp"
+    android:layout_height="50dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:background="@drawable/selector_custom_item"
+    android:focusable="true"
     android:clickable="true">
     <TextView
         android:id="@+id/tv_left"
@@ -18,7 +18,7 @@
         android:id="@+id/et_center"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/tv_left"
+        android:layout_toRightOf="@id/tv_left"
         android:background="@android:color/transparent"
         android:textSize="16sp"
         android:visibility="gone"/>

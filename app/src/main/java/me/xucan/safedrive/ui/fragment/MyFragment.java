@@ -83,7 +83,7 @@ public class MyFragment extends Fragment implements MRequestListener{
     }
 
     @Event(value = {R.id.ci_urgent_phone, R.id.ci_logout, R.id.ci_name, R.id.ci_phone})
-    private void OnClick(View view){
+    private void onClick(View view){
         switch (view.getId()){
             case R.id.ci_urgent_phone:
                 set("绑定紧急号码", new SetDialogListener(){

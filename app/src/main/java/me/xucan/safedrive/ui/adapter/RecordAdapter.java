@@ -78,8 +78,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 		viewHolder.tvStartPlace.setText(record.getStartPlace());
 		viewHolder.tvEndPlace.setText(record.getEndPlace());
 		viewHolder.tvDistance.setText(record.getDistance() + "公里");
-		viewHolder.tvDuration.setText(DateUtil.getDuration(record.getEndTime(),
-				record.getStartTime()));
+		viewHolder.tvDuration.setText(DateUtil.getDuration(
+				record.getStartTime(), record.getEndTime()));
 		viewHolder.itemView.setTag(position);
 		viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
