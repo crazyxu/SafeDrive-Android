@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.telephony.SmsManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,7 +38,10 @@ import me.xucan.safedrive.App;
 import me.xucan.safedrive.R;
 import me.xucan.safedrive.bean.DriveEvent;
 import me.xucan.safedrive.bean.DriveRecord;
+import me.xucan.safedrive.bean.Location;
+import me.xucan.safedrive.bean.User;
 import me.xucan.safedrive.db.MyDBManager;
+import me.xucan.safedrive.db.MySp;
 import me.xucan.safedrive.message.MessageEvent;
 import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;
@@ -43,7 +50,7 @@ import me.xucan.safedrive.util.AppParams;
 import me.xucan.safedrive.util.DateUtil;
 import me.xucan.safedrive.util.EventType;
 import me.xucan.safedrive.util.FormatUtil;
-import me.xucan.safedrive.util.PositionUtil;
+import me.xucan.safedrive.util.LocationUtil;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -89,6 +96,9 @@ public class SimulationFragment extends Fragment implements MRequestListener{
 
     @ViewInject(R.id.ll_get_result)
     private LinearLayout llGetResult;
+
+    //
+    boolean cancel = false;
 
     //当前时间
     private long curTime;
@@ -153,9 +163,40 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                 if (driveEvent != null){
                     String state = EventType.getTip(driveEvent);
                     tvState.setText(state);
+                    //疲劳驾驶
+                    if(driveEvent.getType() == EventType.WARN_FATIGUE)
+                        autoPhone();
                 }
                 break;
         }
+    }
+
+    void autoPhone(){
+        User user = MySp.getUser();
+        if (TextUtils.isEmpty(user.getUrgentPhone()))
+            return;
+        final String urgentPhone = user.getUrgentPhone();
+        new LocationUtil(getActivity(), new LocationUtil.LocationListener() {
+            @Override
+            public void onSuccess(final String location) {
+                Snackbar.make(tvState,"3秒后自动发送紧急短信",Snackbar.LENGTH_LONG).setAction("取消",new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        cancel = true;
+                    }
+                }).show();
+
+                if (!cancel){
+                    SmsManager sms = SmsManager.getDefault();
+                    Location location1 = JSON.parseObject(location, Location.class);
+                    sms.sendTextMessage(urgentPhone, null, location1.getCity() + location1.getDistrict()
+                            + location1.getStreet(), null, null);
+                    //事件
+                    sendDriveEvent(EventType.ACTION_URGENT_PHONE);
+                }
+            }
+        }).start();
+
     }
 
     void initView(){
@@ -214,27 +255,38 @@ public class SimulationFragment extends Fragment implements MRequestListener{
      * 开始行驶
      */
     void startDrive(){
-        Map<String,Object> map = new HashMap<>();
+        final Map<String,Object> map = new HashMap<>();
         record.setUserId(App.getInstance().getUserId());
-        record.setStartPlace(PositionUtil.getStartLocation());
         record.setStartTime(new Date().getTime());
         map.put("record", record);
-        new MJsonRequest(NetParams.URL_DRIVE_START, map, this).startRequest();
+        new LocationUtil(getActivity(), new LocationUtil.LocationListener() {
+            @Override
+            public void onSuccess(String location) {
+                record.setStartPlace(location);
+                new MJsonRequest(NetParams.URL_DRIVE_START, map, SimulationFragment.this).startRequest();
+            }
+        }).start();
+
     }
 
     /**
      * 结束行驶
      */
     void endDrive(){
-        Map<String,Object> map = new HashMap<>();
+        final Map<String,Object> map = new HashMap<>();
         record.setEndTime(curTime);
-        record.setEndPlace(PositionUtil.getEndLocation());
         distance =FormatUtil.KeepTwo(distance);
         record.setDistance(distance);
         record.setSafetyIndex(safetyIndex);
         map.put("record", record);
         //发送请求
-        new MJsonRequest(NetParams.URL_DRIVE_STOP, map, this).startRequest();
+        new LocationUtil(getActivity(), new LocationUtil.LocationListener() {
+            @Override
+            public void onSuccess(String location) {
+                record.setEndPlace(location);
+                new MJsonRequest(NetParams.URL_DRIVE_STOP, map, SimulationFragment.this).startRequest();
+            }
+        }).start();
 
     }
 
@@ -327,7 +379,7 @@ public class SimulationFragment extends Fragment implements MRequestListener{
                     tvTime.setText(DateUtil.getSimplifyTime(curTime));
                     distance += speeds*(AppParams.zoomMultiple/3600f);
                     //十分钟内没有事件
-                    if (curTime - lastEventTime >= 10*60*1000){
+                    if (curTime - lastEventTime >= 10*60*1000 && safetyIndex < 100){
                         sendDriveEvent(EventType.EVENT_NO);
                         tvState.setText("安全指数:" + safetyIndex);
                     }

@@ -6,10 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+
 import java.util.List;
 
 import me.xucan.safedrive.R;
 import me.xucan.safedrive.bean.DriveRecord;
+import me.xucan.safedrive.bean.Location;
 import me.xucan.safedrive.util.DateUtil;
 
 /**
@@ -75,9 +78,11 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 			return;
 		viewHolder.tvStartTime.setText(DateUtil.getDate(record.getStartTime()));
 		viewHolder.tvSafetyPoint.setText("安全指数:" + record.getSafetyIndex());
-		viewHolder.tvStartPlace.setText(record.getStartPlace());
-		viewHolder.tvEndPlace.setText(record.getEndPlace());
-		viewHolder.tvDistance.setText(record.getDistance() + "公里");
+		Location startLoc = JSON.parseObject(record.getStartPlace(), Location.class);
+		Location endLoc = JSON.parseObject(record.getEndPlace(), Location.class);
+		viewHolder.tvEndPlace.setText(endLoc.getDistrict() + endLoc.getStreet());
+		viewHolder.tvStartPlace.setText(startLoc.getDistrict() + startLoc.getStreet());
+		viewHolder.tvDistance.setText(record.getDistance() + "km");
 		viewHolder.tvDuration.setText(DateUtil.getDuration(
 				record.getStartTime(), record.getEndTime()));
 		viewHolder.itemView.setTag(position);

@@ -23,6 +23,7 @@ import java.util.Map;
 import me.xucan.safedrive.R;
 import me.xucan.safedrive.bean.DriveEvent;
 import me.xucan.safedrive.bean.DriveRecord;
+import me.xucan.safedrive.bean.Location;
 import me.xucan.safedrive.net.MJsonRequest;
 import me.xucan.safedrive.net.MRequestListener;
 import me.xucan.safedrive.net.NetParams;
@@ -85,14 +86,16 @@ public class DriveRecordActivity extends AppCompatActivity implements MRequestLi
     void extraIntent(){
         DriveRecord record = (DriveRecord) getIntent().getSerializableExtra("record");
         recordId = record.getRecordId();
-        tvStartPlace.setText(record.getStartPlace() + "");
-        tvEndPlace.setText(record.getEndPlace() + "");
+        Location startLc = JSON.parseObject(record.getStartPlace(), Location.class);
+        Location endLc = JSON.parseObject(record.getEndPlace(), Location.class);
+        tvStartPlace.setText(startLc.getDistrict() + startLc.getStreet());
+        tvEndPlace.setText(endLc.getDistrict() + endLc.getStreet());
         tvStartTime.setText(DateUtil.getSimplifyTime(record.getStartTime()));
         tvEndTime.setText(DateUtil.getSimplifyTime(record.getEndTime()));
         tvDuration.setText(DateUtil.getDuration(record.getStartTime(), record.getEndTime()));
         tvDistance.setText(record.getDistance()+"公里");
         tvSafetyIndex.setText("安全指数:" + record.getSafetyIndex());
-        toolbar.setTitle("湖北荆州 " + DateUtil.getSimplifyDate(record.getStartTime()));
+        toolbar.setTitle(startLc.getProvince() + startLc.getCity() + " " + DateUtil.getSimplifyDate(record.getStartTime()));
         setSupportActionBar(toolbar);
 
     }

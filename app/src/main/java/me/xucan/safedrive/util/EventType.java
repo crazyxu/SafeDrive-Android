@@ -37,6 +37,9 @@ public class EventType {
     //时间流逝
     public final static int EVENT_NO = 0x09;
 
+    //紧急联系
+    public final static int ACTION_URGENT_PHONE = 0x0A;
+
 
     //超速警告
     public final static int WARN_OVER_SPEED = 0x10;
@@ -80,6 +83,8 @@ public class EventType {
                 return "疲劳驾驶";
             case EVENT_NO:
                 return "时间流逝";
+            case ACTION_URGENT_PHONE:
+                return "紧急联系";
         }
         return "未定义";
     }
